@@ -165,7 +165,7 @@ function refresh(){
     let eventid = params.get("eventid");
 
     // TODO aussi
-    let url = `https://www.arnaudmorin.fr/rh/pull?eventid=${eventid}`;
+    let url = `/pull?eventid=${eventid}`;
 
     fetch(url)
         .then(response => {

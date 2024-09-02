@@ -38,7 +38,7 @@ $conn->close();
     <div class="container">
         <?php foreach ($events as $event): ?>
             <div class="event-box">
-                <a href="fai16de/?id=<?php echo htmlspecialchars($event['id']); ?>">
+                <a href="fai16de/?eventid=<?php echo htmlspecialchars($event['id']); ?>">
                     <h2><?php echo htmlspecialchars($event['id']); ?></h2>
                     <p>Click to view details</p>
                 </a>
