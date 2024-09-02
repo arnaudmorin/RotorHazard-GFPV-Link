@@ -1,0 +1,36 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.event-box {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    text-align: center;
+    width: calc(50% - 20px); /* Two rectangles per row */
+    box-sizing: border-box;
+    transition: background-color 0.3s ease;
+}
+
+.event-box:hover {
+    background-color: #e0e0e0;
+    cursor: pointer;
+}
+
+.event-box a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
