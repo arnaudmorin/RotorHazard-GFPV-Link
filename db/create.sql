@@ -1,7 +1,10 @@
 CREATE TABLE `events` (
   `id` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `locked` varchar(255) NOT NULL,
+  `type` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci
 
 CREATE TABLE `races` (
   `name` varchar(255) NOT NULL,
@@ -18,7 +21,7 @@ CREATE TABLE `races` (
   `position2` varchar(255) DEFAULT NULL,
   `position3` varchar(255) DEFAULT NULL,
   `position4` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`name`, `eventid`),
+  PRIMARY KEY (`name`,`eventid`),
+  KEY `races_ibfk_1` (`eventid`),
   CONSTRAINT `races_ibfk_1` FOREIGN KEY (`eventid`) REFERENCES `events` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci
