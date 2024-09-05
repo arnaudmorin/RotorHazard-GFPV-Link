@@ -68,7 +68,7 @@ class GFPVLink():
             name='gfpv-link-eventid',
             label='Event ID',
             field_type=UIFieldType.TEXT,
-            desc="Event must be registered at www.gfpv.fr/register",
+            desc="Event must be registered at link.gfpv.fr/register",
         )
 
         options = []
@@ -284,10 +284,7 @@ class GFPVDataManager():
         results = {}
         for heat in heats:
             pilots = self.get_heat_pilots(heat.id)
-            # Discard heats without pilots
-            # Maybe later we will handle that, who knows..
-            if pilots:
-                results[heat.name] = pilots
+            results[heat.name] = pilots
         return results
 
     def get_races_from_heat(self, heat_id):
@@ -297,8 +294,7 @@ class GFPVDataManager():
 
     def build_races_result(self, races):
         """Build a race result from races list"""
-        # Races are sorted from DB, but better safe than sorry, let's sort them
-        # again now
+        # Races are sorted from DB, but better safe than sorry, let's sort them again now
         sorted_races = [race for race in sorted(races, key=lambda r: r.id)]
 
         # We will store races results in that
@@ -318,11 +314,20 @@ class GFPVDataManager():
                 filteredresults = r[r["meta"]["primary_leaderboard"]]
                 
                 for result in filteredresults:
+                    # For final, also keep position from previous races
+                    allresults = result['position']
+                    if heat.name == "Final":
+                        if heat.name in results:
+                            for r in results[heat.name]:
+                                if r[0] == result["callsign"]:
+                                    # We build the position using previous position and the new one separated by a |
+                                    allresults = f"{r[1]}|{result['position']}"
                     # We keep only pilot and position
-                    raceresults.append([result["callsign"], result['position']])
+                    raceresults.append([result["callsign"], allresults])
+                self.logger.info(f"{heat.name} {raceresults}")
 
             # Add this result, this may override a previous race that was done
-            # for the samei heat ID, but that's fine, we are looping over race in
+            # for the same heat ID, but that's fine, we are looping over race in
             # ordered way so we should have the latest one always
             results[heat.name] = raceresults
         return results
