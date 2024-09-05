@@ -4,9 +4,9 @@ require_once("utils.php");
 
 // Read JSON from POST
 $json = file_get_contents('php://input');
-if (json_last_error() === JSON_ERROR_NONE) {
-    dolog($json);
-}
+#if (json_last_error() === JSON_ERROR_NONE) {
+#    dolog($json);
+#}
 
 // Connect to DB
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -31,23 +31,28 @@ if (empty($eventid)) {
  */
 
 // Check if this event exists
-$check_event_sql = "SELECT COUNT(*) FROM events WHERE id = ?";
+$check_event_sql = "SELECT * FROM events WHERE id = ?";
 $stmt_check_event = $conn->prepare($check_event_sql);
 $stmt_check_event->bind_param("s", $eventid);
 $stmt_check_event->execute();
-$stmt_check_event->bind_result($count);
-$stmt_check_event->fetch();
-$stmt_check_event->close();
+$result = $stmt_check_event->get_result();
 
-if ($count == 0) {
-    // Insert
-    $insert_event_sql = "INSERT INTO events (id) VALUES (?)";
-    $stmt_event = $conn->prepare($insert_event_sql);
-    $stmt_event->bind_param("s", $eventid);
-    $stmt_event->execute();
-    $stmt_event->close();
-    dolog('New event stored in DB: ' . $eventid);
-} 
+if ($result->num_rows == 0) {
+    // The event does not exist
+    // Redirect the user to register
+    dolog("Unregistered event: $eventid");
+    $stmt_check_event->close();
+    die('Wrong eventid');
+} else {
+    $row = $result->fetch_assoc();
+    // Check if event is locked
+    if ($row['locked'] == 'yes') {
+        dolog("Event $eventid is locked");
+        $stmt_check_event->close();
+        die("Event $eventid is locked");
+    }
+}
+$stmt_check_event->close();
 
 /*
  * Heats
@@ -58,6 +63,48 @@ if (isset($data['heats'])) {
     dolog('Received some heats');
     // Heats are races not yet started, so we do not have any position yet
     $heats = $data['heats'];
+
+    // Determine type based on number of races we received
+    $type = null;
+    dolog("Number of heats = " . count($heats));
+    switch (count($heats)) {
+        case 62:
+            $type = 'fai64de';
+            break;
+        case 32:
+            $type = 'fai64';
+            break;
+        case 30:
+            $type = 'fai32de';
+            break;
+        case 16:
+            $type = 'fai32';
+            break;
+        case 14:
+            $type = 'fai16de';
+            break;
+        case 8:
+            $type = 'fai16';
+            break;
+        case 6:
+            $type = 'fai8de';
+            break;
+        case 4:
+            $type = 'fai8';
+            break;
+    }
+    if (isset($type)) {
+        // Update the event
+        $update_event_sql = "UPDATE events SET type = ? WHERE id = ?";
+        $stmt_update_event = $conn->prepare($update_event_sql);
+        $stmt_update_event->bind_param("ss", $type, $eventid);
+        if ($stmt_update_event->execute()) {
+            dolog("Event type updated: $eventid -- $type");
+        } else {
+            dolog("Error while updating event: " . $stmt_update_event->error);
+        }
+        $stmt_update_event->close();
+    }
 
     // Races
     $select_race_sql = "SELECT COUNT(*) FROM races WHERE name = ? AND eventid = ?";
@@ -76,21 +123,25 @@ if (isset($data['heats'])) {
         $stmt_select_race->bind_result($count);
         $stmt_select_race->fetch();
 
+        while (count($pilots) < 4) {
+            $pilots[] = ['', '']; // Ajoute un pilote placeholder
+        }
+
         if ($count > 0) {
             // Update
             $stmt_update_race->bind_param("ssssssssss", $pilots[0][0], $pilots[1][0], $pilots[2][0], $pilots[3][0], $pilots[0][1], $pilots[1][1], $pilots[2][1], $pilots[3][1], $race_name, $eventid);
             if ($stmt_update_race->execute()) {
-                dolog("Race updated: $race_name " . json_encode($pilots));
+                dolog("Heat updated: $race_name " . json_encode($pilots));
             } else {
-                dolog("Error while updating race: " . $stmt_update_race->error);
+                dolog("Error while updating heat: " . $stmt_update_race->error);
             }
         } else {
             // Insert
             $stmt_insert_race->bind_param("ssssssssss", $pilots[0][0], $pilots[1][0], $pilots[2][0], $pilots[3][0], $pilots[0][1], $pilots[1][1], $pilots[2][1], $pilots[3][1], $race_name, $eventid);
             if ($stmt_insert_race->execute()) {
-                dolog("Race added: $race_name " . json_encode($pilots));
+                dolog("Heat added: $race_name " . json_encode($pilots));
             } else {
-                dolog("Error while adding race: " . $stmt_insert_race->error);
+                dolog("Error while adding heat: " . $stmt_insert_race->error);
             }
         }
     }
@@ -131,6 +182,10 @@ if (isset($data['races'])) {
             $pilot2 = $row['pilot2'];
             $pilot3 = $row['pilot3'];
             $pilot4 = $row['pilot4'];
+            $position1 = '';
+            $position2 = '';
+            $position3 = '';
+            $position4 = '';
             // Set each pilot position, with respect to the order in DB
             foreach ($pilots as $pilot) {
                 switch ($pilot[0]) {
@@ -148,15 +203,11 @@ if (isset($data['races'])) {
                         break;
                 }
             }
-            if (isset($position1) && isset($position2) && isset($position3) && isset($position4)) { 
-                $stmt_update_race->bind_param("ssssss", $position1, $position2, $position3, $position4, $race_name, $eventid);
-                if ($stmt_update_race->execute()) {
-                    dolog("Race updated: $race_name " . json_encode($pilots));
-                } else {
-                    dolog("Error while updating race: " . $stmt_update_race->error);
-                }
+            $stmt_update_race->bind_param("ssssss", $position1, $position2, $position3, $position4, $race_name, $eventid);
+            if ($stmt_update_race->execute()) {
+                dolog("Race updated: $race_name " . json_encode($pilots));
             } else {
-                dolog("Error while updating race: missing some position or pilots are wrong!");
+                dolog("Error while updating race: " . $stmt_update_race->error);
             }
         } else {
             // Insert

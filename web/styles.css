@@ -34,3 +34,8 @@ body {
     display: block;
 }
 
+.new {
+    background-color: #f0f8ff; /* Une couleur de fond différente */
+    border: 2px solid #4CAF50; /* Une bordure pour l'accentuer */
+    border-radius: 10px;
+}

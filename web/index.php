@@ -10,7 +10,7 @@ if ($conn->connect_error) {
 }
 
 // Récupérer tous les événements
-$sql = "SELECT id FROM events";
+$sql = "SELECT id, name FROM events";
 $result = $conn->query($sql);
 
 $events = [];
@@ -38,12 +38,18 @@ $conn->close();
     <div class="container">
         <?php foreach ($events as $event): ?>
             <div class="event-box">
-                <a href="fai16de/?eventid=<?php echo htmlspecialchars($event['id']); ?>">
-                    <h2><?php echo htmlspecialchars($event['id']); ?></h2>
-                    <p>Click to view details</p>
+                <a href="view?eventid=<?php echo htmlspecialchars($event['id']); ?>">
+                    <h2><?php echo htmlspecialchars($event['name']); ?></h2>
+                    <p>Click to view races</p>
                 </a>
             </div>
         <?php endforeach; ?>
+        <div class="event-box new">
+            <a href="register">
+                <h2>Create a new event</h2>
+                <p>Click to register un new event</p>
+            </a>
+        </div>
     </div>
 </body>
 </html>
