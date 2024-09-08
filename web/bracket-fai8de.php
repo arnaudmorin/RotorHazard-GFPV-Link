@@ -97,3 +97,4 @@ const races = {
     },
 };
 </script>
+<script src="script-bracket.js"></script>

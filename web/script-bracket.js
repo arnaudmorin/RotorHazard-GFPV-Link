@@ -55,32 +55,34 @@ function refresh(){
  */
 function updateRaceDOM(raceId, values, clas){
     const raceElement = document.getElementById(raceId);
-    raceElement.innerHTML = `
-        <h3>${values['name']}</h3>
-        <div class="lists-container">
-            <ul class="freqs">
-                <li><h4>Freq.</h4></li>
-                <li class="${values['freq1']}" >${values['freq1']}</li>
-                <li class="${values['freq2']}" >${values['freq2']}</li>
-                <li class="${values['freq3']}" >${values['freq3']}</li>
-                <li class="${values['freq4']}" >${values['freq4']}</li>
-            </ul>
-            <ul class='pilotlist ${clas}'>
-                <li><h4>Pilots</h4></li>
-                <li data-position="${values['position1']}">${values['pilot1']}</li>
-                <li data-position="${values['position2']}">${values['pilot2']}</li>
-                <li data-position="${values['position3']}">${values['pilot3']}</li>
-                <li data-position="${values['position4']}">${values['pilot4']}</li>
-            </ul>
-            <ul class='positions'>
-                <li><h4>Pos.</h4></li>
-                <li>${values['position1']}</li>
-                <li>${values['position2']}</li>
-                <li>${values['position3']}</li>
-                <li>${values['position4']}</li>
-            </ul>
-        </div>
-    `;
+    if (raceElement){
+        raceElement.innerHTML = `
+            <h3>${values['name']}</h3>
+            <div class="lists-container">
+                <ul class="freqs">
+                    <li><h4>Freq.</h4></li>
+                    <li class="${values['freq1']}" >${values['freq1']}</li>
+                    <li class="${values['freq2']}" >${values['freq2']}</li>
+                    <li class="${values['freq3']}" >${values['freq3']}</li>
+                    <li class="${values['freq4']}" >${values['freq4']}</li>
+                </ul>
+                <ul class='pilotlist ${clas}'>
+                    <li><h4>Pilots</h4></li>
+                    <li data-position="${values['position1']}">${values['pilot1']}</li>
+                    <li data-position="${values['position2']}">${values['pilot2']}</li>
+                    <li data-position="${values['position3']}">${values['pilot3']}</li>
+                    <li data-position="${values['position4']}">${values['pilot4']}</li>
+                </ul>
+                <ul class='positions'>
+                    <li><h4>Pos.</h4></li>
+                    <li>${values['position1']}</li>
+                    <li>${values['position2']}</li>
+                    <li>${values['position3']}</li>
+                    <li>${values['position4']}</li>
+                </ul>
+            </div>
+        `;
+    };
 }
 
 /*

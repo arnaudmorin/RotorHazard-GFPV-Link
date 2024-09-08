@@ -54,6 +54,9 @@ switch ($eventtype) {
     case 'fai8':
         $title = 'Simple Elimination - 8 pilots';
         break;
+    case 'qualifier':
+        $title = 'Qualifier';
+        break;
     default:
 	// If we dont know...
         $title = 'Elimination Bracket';
@@ -80,7 +83,6 @@ switch ($eventtype) {
     <main>
 <?php include("bracket-$eventtype.php") ?>
     </main>
-    <script src="script.js"></script>
 </body>
 </html>
 

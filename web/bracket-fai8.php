@@ -12,7 +12,6 @@
     <div class="round">
         <div class="race" id="smallfinal"></div>
     </div>
-
 </section>
 
 <script>
@@ -64,3 +63,4 @@ const races = {
     },
 };
 </script>
+<script src="script-bracket.js"></script>

@@ -1,45 +1,47 @@
-            <h2>Upper-bracket</h2> 
-            <div class="round">
-                <div class="race" id="race1"></div>
-                <div class="race" id="race2"></div>
-                <div class="race" id="race3"></div>
-                <div class="race" id="race4"></div>
-            </div>
+<section id="bracket">
+    <h2>Upper-bracket</h2> 
+    <div class="round">
+        <div class="race" id="race1"></div>
+        <div class="race" id="race2"></div>
+        <div class="race" id="race3"></div>
+        <div class="race" id="race4"></div>
+    </div>
 
-            <div class="round">
-                <div class="race" id="race7"></div>
-                <div class="race" id="race8"></div>
-            </div>
+    <div class="round">
+        <div class="race" id="race7"></div>
+        <div class="race" id="race8"></div>
+    </div>
 
-            <div class="round">
-                <div class="race" id="race12"></div>
-            </div>
+    <div class="round">
+        <div class="race" id="race12"></div>
+    </div>
 
-            <div class="round">
-                <div class="race" id="final"></div>
-            </div>
-        </section>
+    <div class="round">
+        <div class="race" id="final"></div>
+    </div>
+</section>
 
-        <section id="losers-bracket">
-            <h2>Lower-bracket</h2> 
+<section id="losers-bracket">
+    <h2>Lower-bracket</h2> 
 
-            <div class="round">
-                <div class="race" id="race5"></div>
-                <div class="race" id="race6"></div>
-            </div>
+    <div class="round">
+        <div class="race" id="race5"></div>
+        <div class="race" id="race6"></div>
+    </div>
 
-            <div class="round">
-                <div class="race" id="race9"></div>
-                <div class="race" id="race10"></div>
-            </div>
+    <div class="round">
+        <div class="race" id="race9"></div>
+        <div class="race" id="race10"></div>
+    </div>
 
-            <div class="round">
-                <div class="race" id="race11"></div>
-            </div>
+    <div class="round">
+        <div class="race" id="race11"></div>
+    </div>
 
-            <div class="round">
-                <div class="race" id="race13"></div>
-            </div>
+    <div class="round">
+        <div class="race" id="race13"></div>
+    </div>
+</section>
 <script>
 
 // FAI 16 DE
@@ -200,3 +202,4 @@ const races = {
     },
 };
 </script>
+<script src="script-bracket.js"></script>

@@ -1,5 +1,5 @@
 <?php
-require_once("passwords.php");
+require_once("../passwords.php");
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
