@@ -18,3 +18,6 @@ def initialize(rhapi):
     rhapi.events.on(Evt.CLASS_DELETE, gfpvlink.init_ui)
     # We want to be notified when heat are altered (plan)
     rhapi.events.on(Evt.HEAT_ALTER, gfpvlink.heat_alter, priority=500)
+    rhapi.events.on(Evt.HEAT_ADD, gfpvlink.heat_alter, priority=500)
+    rhapi.events.on(Evt.HEAT_DELETE, gfpvlink.heat_alter, priority=500)
+    rhapi.events.on(Evt.CACHE_READY, gfpvlink.cache_ready, priority=500)
