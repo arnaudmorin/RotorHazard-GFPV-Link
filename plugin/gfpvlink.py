@@ -17,7 +17,7 @@ class GFPVLink():
     eventid = None
     bracketid = None
 
-    def __init__(self,rhapi):
+    def __init__(self, rhapi):
         self.logger = logging.getLogger(__name__)
         self._rhapi = rhapi
         self.dm = GFPVDataManager(self._rhapi)
@@ -415,10 +415,10 @@ class GFPVDataManager():
                                         allresults = f"{r[1]}|{result['position']}"
                         # We keep only pilot and position
                         raceresults.append([result["callsign"], allresults])
-                    # Add this result, this may override a previous race that was done
-                    # for the same heat ID, but that's fine, we are looping over race in
-                    # ordered way so we should have the latest one always
-                    results['races'][heat.name] = raceresults
+                # Add this result, this may override a previous race that was done
+                # for the same heat ID, but that's fine, we are looping over race in
+                # ordered way so we should have the latest one always
+                results['races'][heat.name] = raceresults
         # Clean empty lists
         results = {k: v for k, v in results.items() if v not in (None, '', [], {})}
         return results
