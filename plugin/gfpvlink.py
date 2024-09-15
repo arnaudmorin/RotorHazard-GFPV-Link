@@ -302,8 +302,8 @@ class GFPVDataManager():
             pilot = self._rhapi.db.pilot_by_id(slot.pilot_id)
             if pilot:
                 freq = ""
-                # Real frequencies are set only on CONFIRMED | 2
-                if heat.status == 2:
+                # Real frequencies are set only on CONFIRMED|2 or PROJECTED|1
+                if heat.status != 0:
                     freq = frequencies[slot.node_index]
                 pilots.append([pilot.callsign, freq])
         return pilots
@@ -347,6 +347,10 @@ class GFPVDataManager():
         # Races are sorted from DB, but better safe than sorry, let's sort them again now
         sorted_races = [race for race in sorted(races, key=lambda r: r.id)]
 
+        # Maybe we do not have races yet
+        if not sorted_races:
+            return {}
+
         # Get class info from first race
         # type is qualifier or bracket
         class_type = self.get_class_type(sorted_races[0].class_id)
@@ -359,7 +363,6 @@ class GFPVDataManager():
         # Depending if we are in a qualifier or bracket, we will loop differently
         if class_type == 'qualifier':
             # Qualifier type
-
             # We will store all laps per pilot in this dict
             combined_laps = {}
             # Ok, let's loop over our recorded races we need all laps
