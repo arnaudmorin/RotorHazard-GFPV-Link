@@ -120,7 +120,7 @@ $conn->close();
 
 <div class="form-container">
     <h2>Register New Event</h2>
-    <form method="POST" action="register.php">
+    <form method="POST" action="index.php">
         <label for="event_name">Event Name:</label>
         <input type="text" id="event_name" name="event_name" placeholder="Enter event name" required>
         <input type="submit" value="Register Event">

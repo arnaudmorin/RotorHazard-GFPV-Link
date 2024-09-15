@@ -20,11 +20,14 @@ function refresh(){
             return response.json();
         })
         .then(data => {
+            race_counter = 0;
+            console.log(data);
             // Loop over races
             data.forEach(race => {
+                race_counter++;
                 // Ok, maybe not the best idea I had but that works :)
-                // Compute the raceId from race.name
-                raceId = race.name.toLowerCase().replace(/\s+/g, '');
+                // Compute the raceId from race_counter
+                raceId = 'race' + race_counter;
 
                 // Update DOM for this race if we have at least one pilot
                 let allEmpty = true;
@@ -91,6 +94,7 @@ function updateRaceDOM(raceId, values, clas){
  */
 function pilotEvents(){
     let listItems = document.querySelectorAll('.pilotlist li');
+    let keepHL = document.querySelectorAll('#keep-hl');
 
     listItems.forEach(item => {
         // Highligh winners
@@ -100,24 +104,48 @@ function pilotEvents(){
         }
 
         if (item.hasAttribute("data-position")) {
+            // On click, keep highligh and disable mouseover/mouseout
+            item.addEventListener('click', () => {
+                // Let's remove HL if already set
+                if (keepHL.innerHTML == 'keep') {
+                    keepHL.innerHTML = '';
+                    listItems.forEach(li => {
+                        li.classList.remove('highlight');
+                    });
+                } else {
+                    // Set HL
+                    let pilotName = item.textContent;
+                    listItems.forEach(li => {
+                        if (li.textContent === pilotName) {
+                            li.classList.add('highlight');
+                            keepHL.innerHTML = 'keep';
+                        }
+                    });
+                }
+            });
+
             // On mouse over --> highlight
             item.addEventListener('mouseover', () => {
-                let pilotName = item.textContent;
-                listItems.forEach(li => {
-                    if (li.textContent === pilotName) {
-                        li.classList.add('highlight');
-                    }
-                });
+                if (keepHL.innerHTML == '') {
+                    let pilotName = item.textContent;
+                    listItems.forEach(li => {
+                        if (li.textContent === pilotName) {
+                            li.classList.add('highlight');
+                        }
+                    });
+                }
             });
 
             // On mouse out --> stop highlight
             item.addEventListener('mouseout', () => {
-                let pilotName = item.textContent;
-                listItems.forEach(li => {
-                    if (li.textContent === pilotName) {
-                        li.classList.remove('highlight');
-                    }
-                });
+                if (keepHL.innerHTML == '') {
+                    let pilotName = item.textContent;
+                    listItems.forEach(li => {
+                        if (li.textContent === pilotName) {
+                            li.classList.remove('highlight');
+                        }
+                    });
+                }
             });
         }
     });
@@ -137,7 +165,7 @@ function main () {
     refresh();
 
     // Set interval to pull again in a loop
-    setInterval(refresh, 100000);
+    setInterval(refresh, 60000);
 }
 
 document.addEventListener("DOMContentLoaded", main());

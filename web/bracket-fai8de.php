@@ -10,7 +10,7 @@
     </div>
 
     <div class="round">
-        <div class="race" id="final"></div>
+        <div class="race" id="race6"></div>
     </div>
 </section>
 

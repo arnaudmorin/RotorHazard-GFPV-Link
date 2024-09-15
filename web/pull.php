@@ -56,8 +56,32 @@ if ($eventid) {
                     'laps' => $laps,
                 ];
             }
+
+            // Also collect heats / freqs
+            $sql = "SELECT name, pilot1, pilot2, pilot3, pilot4, freq1, freq2, freq3, freq4 FROM races WHERE eventid = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("s", $eventid);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $stmt->close();
+
+            $races = [];
+            while ($row = $result->fetch_assoc()) {
+                $races[] = [
+                    'name' => $row['name'],
+                    'pilot1' => $row['pilot1'],
+                    'pilot2' => $row['pilot2'],
+                    'pilot3' => $row['pilot3'],
+                    'pilot4' => $row['pilot4'],
+                    'freq1' => $row['freq1'],
+                    'freq2' => $row['freq2'],
+                    'freq3' => $row['freq3'],
+                    'freq4' => $row['freq4'],
+                ];
+            }
+            
             // Send results as JSON
-            echo json_encode($ranks);
+            echo json_encode(["ranks" => $ranks, "races" => $races]);
         break;
         default:
             $sql = "SELECT name, pilot1, pilot2, pilot3, pilot4, freq1, freq2, freq3, freq4, position1, position2, position3, position4 FROM races WHERE eventid = ?";
@@ -85,6 +109,19 @@ if ($eventid) {
                     'position4' => $row['position4'],
                 ];
             }
+
+            // Kind of human sort
+            usort($races, function ($a, $b) {
+                // If final
+                if ($a['name'] === 'Final') {
+                    return 1;
+                }
+                if ($b['name'] === 'Final') {
+                    return -1;
+                }
+
+                return strnatcmp($a['name'], $b['name']);
+            });
 
             // Send results as JSON
             echo json_encode($races);

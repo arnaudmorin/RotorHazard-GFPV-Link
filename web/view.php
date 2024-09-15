@@ -32,35 +32,45 @@ $stmt_check_event->close();
 switch ($eventtype) {
     case 'fai64de':
         $title = 'Double Elimination - 64 pilots';
+        $initial_scale = 0.5;
         break;
     case 'fai64':
         $title = 'Simple Elimination - 64 pilots';
+        $initial_scale = 0.5;
         break;
     case 'fai32de':
         $title = 'Double Elimination - 32 pilots';
+        $initial_scale = 0.5;
         break;
     case 'fai32':
         $title = 'Simple Elimination - 32 pilots';
+        $initial_scale = 0.5;
         break;
     case 'fai16de':
         $title = 'Double Elimination - 16 pilots';
+        $initial_scale = 0.5;
         break;
     case 'fai16':
         $title = 'Simple Elimination - 16 pilots';
+        $initial_scale = 0.5;
         break;
     case 'fai8de':
         $title = 'Double Elimination - 8 pilots';
+        $initial_scale = 0.5;
         break;
     case 'fai8':
         $title = 'Simple Elimination - 8 pilots';
+        $initial_scale = 0.5;
         break;
     case 'qualifier':
         $title = 'Qualifier';
+        $initial_scale = 1;
         break;
     default:
 	// If we dont know...
         $title = 'Elimination Bracket';
 	$eventtype = 'default';
+        $initial_scale = 1;
         break;
 }
 
@@ -70,7 +80,7 @@ switch ($eventtype) {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.5">
+    <meta name="viewport" content="width=device-width, initial-scale=<?php echo $initial_scale; ?>">
     <title><?php echo $title ?></title>
     <link rel="stylesheet" href="bracket.css">
 </head>
@@ -83,6 +93,7 @@ switch ($eventtype) {
     <main>
 <?php include("bracket-$eventtype.php") ?>
     </main>
+<div id='keep-hl'></div>
 </body>
 </html>
 

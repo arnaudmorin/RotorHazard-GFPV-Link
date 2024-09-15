@@ -6,11 +6,11 @@
     </div>
 
     <div class="round">
-        <div class="race" id="final"></div>
+        <div class="race" id="race4"></div>
     </div>
 
     <div class="round">
-        <div class="race" id="smallfinal"></div>
+        <div class="race" id="race3"></div>
     </div>
 </section>
 

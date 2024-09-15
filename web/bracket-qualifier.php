@@ -1,3 +1,8 @@
+<section id="bracket">
+    <h2>Heats</h2> 
+    <div id="heats">
+    </div>
+</section>
 <table>
     <thead>
         <tr>

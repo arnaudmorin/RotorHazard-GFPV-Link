@@ -5,19 +5,50 @@
         <div class="race" id="race2"></div>
         <div class="race" id="race3"></div>
         <div class="race" id="race4"></div>
-    </div>
-
-    <div class="round">
+        <div class="race" id="race5"></div>
+        <div class="race" id="race6"></div>
         <div class="race" id="race7"></div>
         <div class="race" id="race8"></div>
-    </div>
-
-    <div class="round">
+        <div class="race" id="race9"></div>
+        <div class="race" id="race10"></div>
+        <div class="race" id="race11"></div>
         <div class="race" id="race12"></div>
+        <div class="race" id="race13"></div>
+        <div class="race" id="race14"></div>
+        <div class="race" id="race15"></div>
+        <div class="race" id="race16"></div>
     </div>
 
     <div class="round">
-        <div class="race" id="race14"></div>
+        <div class="race" id="race17"></div>
+        <div class="race" id="race18"></div>
+        <div class="race" id="race19"></div>
+        <div class="race" id="race20"></div>
+        <div class="race" id="race21"></div>
+        <div class="race" id="race22"></div>
+        <div class="race" id="race23"></div>
+        <div class="race" id="race24"></div>
+    </div>
+
+    <div class="round">
+        <div class="race" id="race45"></div>
+        <div class="race" id="race46"></div>
+        <div class="race" id="race47"></div>
+        <div class="race" id="race48"></div>
+    </div>
+
+    <div class="round">
+        <div class="race" id="race55"></div>
+        <div class="race" id="race56"></div>
+    </div>
+
+    <div class="round">
+        <div class="race" id="race60"></div>
+    </div>
+
+    <!-- Final -->
+    <div class="round">
+        <div class="race" id="race62"></div>
     </div>
 </section>
 
@@ -25,21 +56,57 @@
     <h2>Lower-bracket</h2> 
 
     <div class="round">
-        <div class="race" id="race5"></div>
-        <div class="race" id="race6"></div>
+        <div class="race" id="race25"></div>
+        <div class="race" id="race26"></div>
+        <div class="race" id="race27"></div>
+        <div class="race" id="race28"></div>
+        <div class="race" id="race29"></div>
+        <div class="race" id="race30"></div>
+        <div class="race" id="race31"></div>
+        <div class="race" id="race32"></div>
     </div>
 
     <div class="round">
-        <div class="race" id="race9"></div>
-        <div class="race" id="race10"></div>
+        <div class="race" id="race33"></div>
+        <div class="race" id="race34"></div>
+        <div class="race" id="race35"></div>
+        <div class="race" id="race36"></div>
+        <div class="race" id="race37"></div>
+        <div class="race" id="race38"></div>
+        <div class="race" id="race39"></div>
+        <div class="race" id="race40"></div>
     </div>
 
     <div class="round">
-        <div class="race" id="race11"></div>
+        <div class="race" id="race41"></div>
+        <div class="race" id="race42"></div>
+        <div class="race" id="race43"></div>
+        <div class="race" id="race44"></div>
     </div>
 
     <div class="round">
-        <div class="race" id="race13"></div>
+        <div class="race" id="race49"></div>
+        <div class="race" id="race50"></div>
+        <div class="race" id="race51"></div>
+        <div class="race" id="race52"></div>
+    </div>
+
+    <div class="round">
+        <div class="race" id="race53"></div>
+        <div class="race" id="race54"></div>
+    </div>
+
+    <div class="round">
+        <div class="race" id="race57"></div>
+        <div class="race" id="race58"></div>
+    </div>
+
+    <div class="round">
+        <div class="race" id="race59"></div>
+    </div>
+
+    <div class="round">
+        <div class="race" id="race61"></div>
     </div>
 </section>
 <script>
