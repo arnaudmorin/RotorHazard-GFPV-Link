@@ -89,7 +89,6 @@ switch ($eventtype) {
         <h1><?php echo $title ?></h1>
         <a href="/" class="button">Back to event list</a>
     </header>
-    
     <main>
 <?php include("bracket-$eventtype.php") ?>
     </main>

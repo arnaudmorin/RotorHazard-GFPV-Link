@@ -21,7 +21,6 @@ function refresh(){
         })
         .then(data => {
             race_counter = 0;
-            console.log(data);
             // Loop over races
             data.forEach(race => {
                 race_counter++;
@@ -151,6 +150,124 @@ function pilotEvents(){
     });
 }
 
+/*
+ * Get Pinch distance
+ */
+function getPinchDistance(touch1, touch2) {
+    const dx = touch2.clientX - touch1.clientX;
+    const dy = touch2.clientY - touch1.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+/*
+ * Function that read the current translate
+ */
+function getTranslate(str){
+    const translateRegex = /translate\(([-\d.]+px),\s*([-\d.]+px)\)/;
+
+    const result = translateRegex.exec(str);
+
+    if (result) {
+        return [parseInt(result[1]), parseInt(result[2])];
+    } else {
+        return [0, 0];
+    }
+}
+
+/*
+ * Move the bracket on the page
+ */
+function enableDrag(){
+    const mainElement = document.querySelector('main');
+    const bodyElement = document.querySelector('body');
+    const zoomSpeed = 0.03;     // Zoom speed
+    let scale = 1;              // zoom initial scale
+    let startX, startY, offsetX = 0, offsetY = 0, isDragging = false;
+    let initialDistance = 0;
+
+    function zoom(e){
+	if (e.deltaY < 0) {
+	    scale += zoomSpeed;
+
+            // Avoid too much zoom
+	    if (scale > 1.5) scale = 1.5;
+	} else {
+	    scale -= zoomSpeed;
+
+	    // Avoid too small zoom
+	    if (scale < 0.5) scale = 0.5;
+	}
+        let currentTransform = mainElement.style.transform;
+        currentTransform = currentTransform.replace(/scale\([^)]+\)/, '');
+	mainElement.style.transform = `scale(${scale})` + currentTransform;
+    }
+
+    function startDrag(e) {
+        if (e.type === 'touchstart' && e.touches.length === 2) {
+            // On mobile, pinch with two fingers
+            initialDistance = getPinchDistance(e.touches[0], e.touches[1]);
+            bodyElement.style.cursor = 'zoom-in';
+        } else {
+            isDragging = true;
+            startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+            startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+            [offsetX, offsetY] = getTranslate(mainElement.style.transform);
+            bodyElement.style.cursor = 'grabbing';
+        }
+    }
+
+    function drag(e) {
+        if (e.type === 'touchmove' && e.touches.length === 2) {
+            const newDistance = getPinchDistance(e.touches[0], e.touches[1]);
+            const scaleChange = newDistance / initialDistance;
+            scale *= scaleChange;
+            // Avoid too much zoom
+	    if (scale > 1.5) scale = 1.5;
+	    // Avoid too small zoom
+	    if (scale < 0.1) scale = 0.1;
+            let currentTransform = mainElement.style.transform;
+            currentTransform = currentTransform.replace(/scale\([^)]+\)/, '');
+            mainElement.style.transform = `scale(${scale})` + currentTransform;
+            initialDistance = newDistance;
+        } else {
+            if (!isDragging) return;
+
+            const x = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            const y = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+            const dx = (x - startX)/scale;
+            const dy = (y - startY)/scale;
+
+            let currentTransform = mainElement.style.transform;
+            currentTransform = currentTransform.replace(/translate\([^)]+\)/, '');
+            mainElement.style.transform = currentTransform + `translate(${(offsetX + dx)}px, ${(offsetY + dy)}px)`;
+        }
+    }
+
+    function endDrag(e) {
+        isDragging = false;
+        bodyElement.style.cursor = '';
+    }
+
+    // Computer
+    window.addEventListener('mousedown', startDrag);
+    window.addEventListener('mousemove', drag);
+    window.addEventListener('mouseup', endDrag);
+    window.addEventListener('wheel', zoom);
+
+    // Mobile
+    window.addEventListener('touchstart', startDrag);
+    window.addEventListener('touchmove', drag);
+    window.addEventListener('touchend', endDrag);
+}
+
+/*
+ * Prevent scrolling
+ */
+function preventScrolling(event) {
+    event.preventDefault();
+}
+
 
 /*
  * First function called when DOM is ready
@@ -166,6 +283,11 @@ function main () {
 
     // Set interval to pull again in a loop
     setInterval(refresh, 60000);
+
+    // Prevent scrolling
+    document.addEventListener('touchmove', preventScrolling, { passive: false });
+    document.addEventListener('wheel', preventScrolling, { passive: false });
+    enableDrag();
 }
 
 document.addEventListener("DOMContentLoaded", main());
