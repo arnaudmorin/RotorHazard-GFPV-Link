@@ -1,7 +1,8 @@
 CREATE TABLE `events` (
   `id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `locked` varchar(255) NOT NULL,
+  `locked` varchar(255) NOT NULL DEFAULT 'no',
+  `archived` varchar(255) NOT NULL DEFAULT 'no',
   `type` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci
