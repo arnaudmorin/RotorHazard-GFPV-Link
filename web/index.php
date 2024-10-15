@@ -10,7 +10,7 @@ if ($conn->connect_error) {
 }
 
 // Récupérer tous les événements
-$sql = "SELECT id, name FROM events";
+$sql = "SELECT id, name FROM events where archived='no'";
 $result = $conn->query($sql);
 
 $events = [];
