@@ -10,6 +10,7 @@ def initialize(rhapi):
     rhapi.events.on(Evt.STARTUP, gfpvlink.init_plugin)
     rhapi.events.on(Evt.LAPS_SAVE, gfpvlink.laps_save, priority=500)
     rhapi.events.on(Evt.LAPS_RESAVE, gfpvlink.laps_save, priority=500)
+    rhapi.events.on(Evt.RACE_FINISH, gfpvlink.laps_save, priority=500)
     # We need to re-init ui when on class event to make sure the select options
     # are good
     rhapi.events.on(Evt.CLASS_ADD, gfpvlink.init_ui)
