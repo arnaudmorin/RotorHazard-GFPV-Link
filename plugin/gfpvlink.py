@@ -142,7 +142,7 @@ class GFPVLink():
 
             # Get all races and laps from this heat
             # We need to do that because maybe we are marshalling a race which is not the latest one for this round.
-            data = self.dm.get_races_from_heat(self.bracketid)
+            data = self.dm.get_races_from_heat(race.heat_id)
 
             # Send data
             if self.send_data(data):
