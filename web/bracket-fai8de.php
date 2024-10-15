@@ -9,6 +9,7 @@
         <div class="race" id="race4"></div>
     </div>
 
+    <!-- final -->
     <div class="round">
         <div class="race" id="race6"></div>
     </div>
@@ -39,6 +40,10 @@ const races = {
         freq2: "",
         freq3: "",
         freq4: "",
+        position1: "",
+        position2: "",
+        position3: "",
+        position4: "",
     },
     race2: {
         name: "Race 2",
@@ -50,6 +55,10 @@ const races = {
         freq2: "",
         freq3: "",
         freq4: "",
+        position1: "",
+        position2: "",
+        position3: "",
+        position4: "",
     },
     race3: {
         name: "Race 3",
@@ -61,6 +70,10 @@ const races = {
         freq2: "",
         freq3: "",
         freq4: "",
+        position1: "",
+        position2: "",
+        position3: "",
+        position4: "",
     },
     race4: {
         name: "Race 4",
@@ -72,6 +85,10 @@ const races = {
         freq2: "",
         freq3: "",
         freq4: "",
+        position1: "",
+        position2: "",
+        position3: "",
+        position4: "",
     },
     race5: {
         name: "Race 5",
@@ -83,8 +100,12 @@ const races = {
         freq2: "",
         freq3: "",
         freq4: "",
+        position1: "",
+        position2: "",
+        position3: "",
+        position4: "",
     },
-    final: {
+    race6: {
         name: "Final",
         pilot1: "Race 4 - 2",
         pilot2: "Race 4 - 1",
@@ -94,6 +115,10 @@ const races = {
         freq2: "",
         freq3: "",
         freq4: "",
+        position1: "",
+        position2: "",
+        position3: "",
+        position4: "",
     },
 };
 </script>

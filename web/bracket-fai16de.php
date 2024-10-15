@@ -16,6 +16,7 @@
         <div class="race" id="race12"></div>
     </div>
 
+    <!-- final -->
     <div class="round">
         <div class="race" id="race14"></div>
     </div>
@@ -189,7 +190,7 @@ const races = {
         freq3: "",
         freq4: "",
     },
-    final: {
+    race14: {
         name: "Final",
         pilot1: "Race 13 - 2",
         pilot2: "Race 12 - 2",

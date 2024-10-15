@@ -282,7 +282,7 @@ function main () {
     refresh();
 
     // Set interval to pull again in a loop
-    setInterval(refresh, 60000);
+    setInterval(refresh, 10000);
 
     // Prevent scrolling
     document.addEventListener('touchmove', preventScrolling, { passive: false });

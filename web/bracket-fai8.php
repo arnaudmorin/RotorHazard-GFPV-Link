@@ -6,11 +6,12 @@
     </div>
 
     <div class="round">
-        <div class="race" id="race4"></div>
+        <div class="race" id="race3"></div>
     </div>
 
+    <!-- final -->
     <div class="round">
-        <div class="race" id="race3"></div>
+        <div class="race" id="race4"></div>
     </div>
 </section>
 
@@ -39,7 +40,7 @@ const races = {
         freq3: "",
         freq4: "",
     },
-    smallfinal: {
+    race3: {
         name: "Small Final",
         pilot1: "Race 1 - 4",
         pilot2: "Race 1 - 3",
@@ -50,7 +51,7 @@ const races = {
         freq3: "",
         freq4: "",
     },
-    final: {
+    race4: {
         name: "Final",
         pilot1: "Race 1 - 2",
         pilot2: "Race 1 - 1",
