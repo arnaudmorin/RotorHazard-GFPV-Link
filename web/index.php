@@ -10,7 +10,7 @@ if ($conn->connect_error) {
 }
 
 // Récupérer tous les événements
-$sql = "SELECT id, name FROM events where archived='no'";
+$sql = "SELECT id, name, type FROM events where archived='no'";
 $result = $conn->query($sql);
 
 $events = [];
@@ -38,7 +38,7 @@ $conn->close();
     <div class="container">
         <?php foreach ($events as $event): ?>
             <div class="event-box">
-                <a href="view?eventid=<?php echo htmlspecialchars($event['id']); ?>">
+                <a href="view-<?php echo $event['type'] ?>?eventid=<?php echo htmlspecialchars($event['id']); ?>">
                     <h2><?php echo htmlspecialchars($event['name']); ?></h2>
                     <p>Click to view races</p>
                 </a>
