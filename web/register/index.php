@@ -16,17 +16,20 @@ $success_message = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Récupérer le nom de l'événement depuis le formulaire
     $event_name = trim($_POST['event_name']);
+    $event_type = trim($_POST['event_type']);
 
     // Valider le champ event_name
     if (empty($event_name)) {
         $error_message = "Event name is required.";
+    } else if (empty($event_type)) {
+        $error_message = "Event type is required.";
     } else {
         // Générer un ID unique pour l'événement
         $event_id = uniqid('gfpvlink-');
 
         // Préparer la requête d'insertion
-        $stmt = $conn->prepare("INSERT INTO events (id, name, locked) VALUES (?, ?, 'no')");
-        $stmt->bind_param("ss", $event_id, $event_name);
+        $stmt = $conn->prepare("INSERT INTO events (id, name, type, locked) VALUES (?, ?, ?, 'no')");
+        $stmt->bind_param("sss", $event_id, $event_name, $event_type);
 
         // Exécuter la requête
         if ($stmt->execute()) {
@@ -123,6 +126,14 @@ $conn->close();
     <form method="POST" action="index.php">
         <label for="event_name">Event Name:</label>
         <input type="text" id="event_name" name="event_name" placeholder="Enter event name" required>
+        <br/>
+        <label for="event_type">Event type:</label>
+        <select name="event_type" id="event_type">
+          <option value="">--Please choose an option--</option>
+          <option value="qualifier">Qualifier</option>
+          <option value="elimination">Elimination</option>
+        </select>
+        <br/>
         <input type="submit" value="Register Event">
         <a href="/" class="button">Go back</a>
     </form>

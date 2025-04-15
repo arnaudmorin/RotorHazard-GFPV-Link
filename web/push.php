@@ -55,109 +55,50 @@ if ($result->num_rows == 0) {
 $stmt_check_event->close();
 
 /*
- * Heats
+ * Heat
  * Contain pilot and frequency
  */
 
-if (isset($data['heats'])) {
-    dolog($eventid, '--> Received some heats');
-    // Heats are races not yet started, so we do not have any position yet
-    $heats = $data['heats'];
-    $all_races_name = array_keys($heats);
+if (isset($data['heat']) and isset($data['action']) and $data['action'] == 'alter') {
+    dolog($eventid, '--> Received a new heat');
+    $heat = $data['heat'];
 
-    // Check if this is a qualifier race
-    $qualifier = false;
-    foreach ($all_races_name as $race){
-        if (stripos($race, 'qualifier') !== false) {
-            $qualifier = true;
-            break;
-        }
-    }
-
-    // If it's not a qualifier
-    $type = null;
-    if ($qualifier) {
-        $type = "qualifier";
-    } else {
-        // Determine type based on number of races we received
-        dolog($eventid, "Number of heats = " . count($heats));
-        switch (count($heats)) {
-            case 62:
-                $type = 'fai64de';
-                break;
-            case 32:
-                $type = 'fai64';
-                break;
-            case 30:
-                $type = 'fai32de';
-                break;
-            case 16:
-                $type = 'fai32';
-                break;
-            case 14:
-                $type = 'fai16de';
-                break;
-            case 8:
-                $type = 'fai16';
-                break;
-            case 6:
-                $type = 'fai8de';
-                break;
-            case 4:
-                $type = 'fai8';
-                break;
-        }
-    }
-    if (isset($type)) {
-        // Update the event
-        $update_event_sql = "UPDATE events SET type = ? WHERE id = ?";
-        $stmt_update_event = $conn->prepare($update_event_sql);
-        $stmt_update_event->bind_param("ss", $type, $eventid);
-        if ($stmt_update_event->execute()) {
-            dolog($eventid, "Event type updated: $eventid -- $type");
-        } else {
-            dolog($eventid, "Error while updating event: " . $stmt_update_event->error);
-        }
-        $stmt_update_event->close();
-    }
-
-    // Races
-    $select_race_sql = "SELECT COUNT(*) FROM races WHERE name = ? AND eventid = ?";
-    $insert_race_sql = "INSERT INTO races (pilot1, pilot2, pilot3, pilot4, freq1, freq2, freq3, freq4, name, eventid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $update_race_sql = "UPDATE races SET pilot1 = ?, pilot2 = ?, pilot3 = ?, pilot4 = ?, freq1 = ?, freq2 = ?, freq3 = ?, freq4 = ? WHERE name = ? AND eventid = ?";
+    // Heat
+    $select_race_sql = "SELECT COUNT(*) FROM heats WHERE id = ? AND eventid = ?";
+    $insert_race_sql = "INSERT INTO heats (id, pilot1, pilot2, pilot3, pilot4, freq1, freq2, freq3, freq4, name, eventid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $update_race_sql = "UPDATE heats SET pilot1 = ?, pilot2 = ?, pilot3 = ?, pilot4 = ?, freq1 = ?, freq2 = ?, freq3 = ?, freq4 = ?, name = ? WHERE id = ? AND eventid = ?";
 
     $stmt_select_race = $conn->prepare($select_race_sql);
     $stmt_insert_race = $conn->prepare($insert_race_sql);
     $stmt_update_race = $conn->prepare($update_race_sql);
 
-    foreach ($heats as $race_name => $pilots) {
-        // Check if race already exists
-        $stmt_select_race->bind_param("ss", $race_name, $eventid);
-        $stmt_select_race->execute();
-        $stmt_select_race->store_result();
-        $stmt_select_race->bind_result($count);
-        $stmt_select_race->fetch();
+    // Check if heat already exists
+    $stmt_select_race->bind_param("ss", $heat['id'], $eventid);
+    $stmt_select_race->execute();
+    $stmt_select_race->store_result();
+    $stmt_select_race->bind_result($count);
+    $stmt_select_race->fetch();
 
-        while (count($pilots) < 4) {
-            $pilots[] = ['', '']; // Ajoute un pilote placeholder
-        }
+    $pilots = $heat['pilots'];
+    while (count($pilots) < 4) {
+        $pilots[] = ['', '']; // Ajoute un pilote placeholder
+    }
 
-        if ($count > 0) {
-            // Update
-            $stmt_update_race->bind_param("ssssssssss", $pilots[0][0], $pilots[1][0], $pilots[2][0], $pilots[3][0], $pilots[0][1], $pilots[1][1], $pilots[2][1], $pilots[3][1], $race_name, $eventid);
-            if ($stmt_update_race->execute()) {
-                dolog($eventid, "Heat updated: $race_name " . json_encode($pilots));
-            } else {
-                dolog($eventid, "Error while updating heat: " . $stmt_update_race->error);
-            }
+    if ($count > 0) {
+        // Update
+        $stmt_update_race->bind_param("sssssssssss", $pilots[0][0], $pilots[1][0], $pilots[2][0], $pilots[3][0], $pilots[0][1], $pilots[1][1], $pilots[2][1], $pilots[3][1], $heat['name'], $heat['id'], $eventid);
+        if ($stmt_update_race->execute()) {
+            dolog($eventid, "Heat updated: ${heat['name']} " . json_encode($pilots));
         } else {
-            // Insert
-            $stmt_insert_race->bind_param("ssssssssss", $pilots[0][0], $pilots[1][0], $pilots[2][0], $pilots[3][0], $pilots[0][1], $pilots[1][1], $pilots[2][1], $pilots[3][1], $race_name, $eventid);
-            if ($stmt_insert_race->execute()) {
-                dolog($eventid, "Heat added: $race_name " . json_encode($pilots));
-            } else {
-                dolog($eventid, "Error while adding heat: " . $stmt_insert_race->error);
-            }
+            dolog($eventid, "Error while updating heat: " . $stmt_update_race->error);
+        }
+    } else {
+        // Insert
+        $stmt_insert_race->bind_param("sssssssssss", $heat['id'], $pilots[0][0], $pilots[1][0], $pilots[2][0], $pilots[3][0], $pilots[0][1], $pilots[1][1], $pilots[2][1], $pilots[3][1], $heat['name'], $eventid);
+        if ($stmt_insert_race->execute()) {
+            dolog($eventid, "Heat added: ${heat['name']} " . json_encode($pilots));
+        } else {
+            dolog($eventid, "Error while adding heat: " . $stmt_insert_race->error);
         }
     }
 
@@ -165,103 +106,83 @@ if (isset($data['heats'])) {
     $stmt_insert_race->close();
     $stmt_update_race->close();
 
-    // Let's clean races which are not necessary anymore
-    // RH is sending heats from a class, if we add / delete heats, it will send
-    // heats again, and we dont want to keep the one which are deleted
-    $sql = "SELECT name FROM races WHERE eventid = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $eventid);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $rows = $result->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-
-    foreach ($rows as $row){
-        if (! in_array($row['name'], $all_races_name)){
-            dolog($eventid, "Deleting " . $row['name']);
-            $sql = "DELETE FROM races WHERE name = ? AND eventid = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ss", $row['name'], $eventid);
-            $stmt->execute();
-            $stmt->close();
-        }
+    # Update the event to set the current heat
+    $sql = "UPDATE events SET current_heat_id = ? WHERE id = ?";
+    $stm = $conn->prepare($sql);
+    $stm->bind_param("ss", $heat['id'], $eventid);
+    if ($stm->execute()) {
+        dolog($eventid, "Current heat set to ${heat['id']}");
+    } else {
+        dolog($eventid, "Unable to update current heat: " . $stm->error);
     }
+    $stm->close();
+}
+
+if (isset($data['heat']) and isset($data['action']) and $data['action'] == 'delete') {
+    dolog($eventid, '--> Deleted heat');
+    $heat = $data['heat'];
+
+    // Heat
+    $select_race_sql = "SELECT COUNT(*) FROM heats WHERE id = ? AND eventid = ?";
+    $delete_race_sql = "DELETE FROM heats WHERE id = ? AND eventid = ?";
+
+    $stmt_select_race = $conn->prepare($select_race_sql);
+
+    // Check if heat exists
+    $stmt_select_race->bind_param("ss", $heat['id'], $eventid);
+    $stmt_select_race->execute();
+    $stmt_select_race->store_result();
+    $stmt_select_race->bind_result($count);
+    $stmt_select_race->fetch();
+
+    if ($count > 0) {
+        // Delete
+        $stmt_delete_race = $conn->prepare($delete_race_sql);
+        $stmt_delete_race->bind_param("ss", $heat['id'], $eventid);
+        if ($stmt_delete_race->execute()) {
+            dolog($eventid, "Heat deleted: ${heat['id']} ");
+        } else {
+            dolog($eventid, "Error while deleting heat: " . $stmt_delete_race->error);
+        }
+    } else {
+        // Nothing to do, let's log that anyway
+        dolog($eventid, "Heat already deleted: ${heat['id']} ");
+    }
+
+    $stmt_select_race->close();
+    $stmt_delete_race->close();
 }
 
 /*
- * Races
- * contain pilots and position in races
+ * Round
+ * Contain round results (laps and eventual position)
  */
 
-if (isset($data['races'])) {
-    dolog($eventid, '--> Received some races');
-    $races = $data['races'];
+if (isset($data['round'])) {
+    dolog($eventid, '--> Received a new round');
+    $round = $data['round'];
 
-    // Races
-    $select_race_sql = "SELECT pilot1, pilot2, pilot3, pilot4 FROM races WHERE name = ? AND eventid = ?";
-    $insert_race_sql = "INSERT INTO races (pilot1, pilot2, pilot3, pilot4, position1, position2, position3, position4, name, eventid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $update_race_sql = "UPDATE races SET position1 = ?, position2 = ?, position3 = ?, position4 = ? WHERE name = ? AND eventid = ?";
-
-    $stmt_select_race = $conn->prepare($select_race_sql);
-    $stmt_insert_race = $conn->prepare($insert_race_sql);
-    $stmt_update_race = $conn->prepare($update_race_sql);
-
-    foreach ($races as $race_name => $pilots) {
-        // Check if race already exists
-        $stmt_select_race->bind_param("ss", $race_name, $eventid);
-        $stmt_select_race->execute();
-        $result = $stmt_select_race->get_result();
-
-        if ($result->num_rows > 0) {
-            // Update
-            $row = $result->fetch_assoc();
-            $pilot1 = $row['pilot1'];
-            $pilot2 = $row['pilot2'];
-            $pilot3 = $row['pilot3'];
-            $pilot4 = $row['pilot4'];
-            $position1 = '';
-            $position2 = '';
-            $position3 = '';
-            $position4 = '';
-            // Set each pilot position, with respect to the order in DB
-            foreach ($pilots as $pilot) {
-                switch ($pilot[0]) {
-                    case $pilot1:
-                        $position1 = $pilot[1];
-                        break;
-                    case $pilot2:
-                        $position2 = $pilot[1];
-                        break;
-                    case $pilot3:
-                        $position3 = $pilot[1];
-                        break;
-                    case $pilot4:
-                        $position4 = $pilot[1];
-                        break;
-                }
-            }
-            $stmt_update_race->bind_param("ssssss", $position1, $position2, $position3, $position4, $race_name, $eventid);
-            if ($stmt_update_race->execute()) {
-                dolog($eventid, "Race updated: $race_name " . json_encode($pilots));
-            } else {
-                dolog($eventid, "Error while updating race: " . $stmt_update_race->error);
-            }
+    # First delete all previous results
+    $sql = "DELETE FROM rounds WHERE id = ? AND heat_id = ? AND pilot = ? AND eventid = ?";
+    $stm = $conn->prepare($sql);
+    $stm->bind_param("ssss", $round['id'], $round['heat_id'], $round['pilot'], $eventid);
+    if ($stm->execute()) {
+        $stm->close();
+        # Now insert the new results
+        $laps = json_encode($round['laps']);
+        $sql = "INSERT INTO rounds (id, heat_id, eventid, pilot, laps, position) VALUES (?, ?, ?, ?, ?, ?)";
+        $stm = $conn->prepare($sql);
+        $stm->bind_param("ssssss", $round['id'], $round['heat_id'], $eventid, $round['pilot'], $laps, $round['position']);
+        if ($stm->execute()) {
+            dolog($eventid, "Round updated: ${round['id']} - ${round['pilot']} - ${laps}");
         } else {
-            // Insert
-            $stmt_insert_race->bind_param("ssssssssss", $pilots[0][0], $pilots[0][1], $pilots[0][2], $pilots[0][3], $pilots[1][0], $pilots[1][1], $pilots[1][2], $pilots[1][3], $race_name, $eventid);
-            if ($stmt_insert_race->execute()) {
-                dolog($eventid, "Race added: $race_name " . json_encode($pilots));
-            } else {
-                dolog($eventid, "Error while adding race: " . $stmt_insert_race->error);
-            }
+            dolog($eventid, "Error while inserting round: " . $stm->error);
         }
+    } else {
+        dolog($eventid, "Error while deleting round: " . $stm->error);
     }
-
-    $stmt_select_race->close();
-    $stmt_insert_race->close();
-    $stmt_update_race->close();
+    $stm->close();
 }
-
 
 /*
  * Ranks
@@ -293,56 +214,6 @@ if (isset($data['ranks'])) {
         }
     }
     $stmt->close();
-}
-
-
-/*
- * Laps
- * contain pilot laps for a qualifier event
- */
-
-if (isset($data['laps'])) {
-    dolog($eventid, '--> Received some laps');
-    $all_laps = $data['laps'];
-
-    $select_sql = "SELECT count(1) FROM laps WHERE pilot = ? AND eventid = ?";
-    $insert_sql = "INSERT INTO laps (eventid, pilot, laps) VALUES (?, ?, ?)";
-    $update_sql = "UPDATE laps SET laps = ? WHERE pilot = ? AND eventid = ?";
-
-    $stmt_select = $conn->prepare($select_sql);
-    $stmt_insert = $conn->prepare($insert_sql);
-    $stmt_update = $conn->prepare($update_sql);
-
-    foreach ($all_laps as $pilot => $laps) {
-        $json_laps = json_encode($laps);
-        // Check if laps already exists
-        $stmt_select->bind_param("ss", $pilot, $eventid);
-        $stmt_select->execute();
-        $stmt_select->store_result();
-        $stmt_select->bind_result($count);
-        $stmt_select->fetch();
-
-        if ($count > 0) {
-            // Update
-            $stmt_update->bind_param("sss", $json_laps, $pilot, $eventid);
-            if ($stmt_update->execute()) {
-                dolog($eventid, "Laps updated: $pilot " . $json_laps);
-            } else {
-                dolog($eventid, "Error while updating laps: " . $stmt_update->error);
-            }
-        } else {
-            // Insert
-            $stmt_insert->bind_param("sss", $eventid, $pilot, $json_laps);
-            if ($stmt_insert->execute()) {
-                dolog($eventid, "Laps added: $pilot " . $json_laps);
-            } else {
-                dolog($eventid, "Error while adding laps: " . $stmt_insert->error);
-            }
-        }
-    }
-    $stmt_select->close();
-    $stmt_insert->close();
-    $stmt_update->close();
 }
 
 $conn->close();
