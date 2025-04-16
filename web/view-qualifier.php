@@ -181,11 +181,13 @@ document.addEventListener("DOMContentLoaded", main());
 <ons-page id="results">
     <ons-toolbar>
         <div class="center">Tours</div>
-        <div class="left">
-            <ons-back-button></ons-back-button>
-        </div>
     </ons-toolbar>
     <ons-list id="laps"></ons-list>
+    <ons-bottom-toolbar>
+        <div class="center">
+            <ons-button modifier="large" onclick="document.querySelector('ons-navigator').popPage()">back</ons-button>
+        </div>
+    </ons-bottom-toolbar>
 </ons-page>
 </template>
 
