@@ -141,16 +141,48 @@ document.addEventListener('show', ({ target }) => {
 /*
  * First function called when DOM is ready
  */
-function main () {
+
+ons.ready(function() {
     // Pull data from server
     refresh();
 
-    // Set interval to pull again in a loop
-    //setInterval(refresh, 60000);
-}
+    // Listen for events on tabs
+    // when an event occur, look for the pull-hook, if found, attach a listener
+    // on it so we can actually refresh
+    document.addEventListener('init', function(event) {
+        var pullHooks = document.getElementsByName('pull-hook');
+        if (pullHooks){
+            for (let pullHook of pullHooks) {
+                pullHook.addEventListener('changestate', function(event) {
+                    var message = '';
+
+                    switch (event.state) {
+                        case 'initial':
+                            message = '<i class="fa fa-arrow-down"></i>';
+                            break;
+                        case 'preaction':
+                            message = '<i class="fa fa-arrow-up"></i><span> release to refresh</span>';
+                            break;
+                        case 'action':
+                            message = '<i class="fa fa-spinner"></i>';
+                            break;
+                    }
+
+                    pullHook.innerHTML = message;
+                });
+
+
+                // Action executed when pull-hook triggered
+                pullHook.onAction = function(done) {
+                    refresh();
+                    setTimeout(done, 1000);
+                };
+            };
+        };
+    });
+});
 
 ons.disableAutoStyling()
-document.addEventListener("DOMContentLoaded", main());
 
   </script>
 </head>
@@ -158,7 +190,7 @@ document.addEventListener("DOMContentLoaded", main());
 
 <ons-navigator id="navigator">
 <ons-page>
-    <ons-tabbar swipeable position="auto">
+    <ons-tabbar position="bottom">
         <ons-tab page="heats.html" label="Heats" icon="fa-cubes" active></ons-tab>
         <ons-tab page="leaderboard.html" label="Results" icon="fa-list-ol"></ons-tab>
     </ons-tabbar>
@@ -167,12 +199,18 @@ document.addEventListener("DOMContentLoaded", main());
 
 <template id="heats.html">
 <ons-page>
+    <ons-pull-hook threshold-height=-1 name="pull-hook">
+        <i class="fa fa-arrow-down"></i>
+    </ons-pull-hook>
     <div id="heats"></div>
 </ons-page>
 </template>
 
 <template id="leaderboard.html">
 <ons-page>
+    <ons-pull-hook threshold-height=-1 name="pull-hook">
+        <i class="fa fa-arrow-down"></i>
+    </ons-pull-hook>
     <div id="leaderboard"></div>
 </ons-page>
 </template>
